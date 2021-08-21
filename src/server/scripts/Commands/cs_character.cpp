@@ -33,6 +33,22 @@ public:
             { "write",          SEC_ADMINISTRATOR,  true,  &HandlePDumpWriteCommand,                "" }
         };
 
+        static std::vector<ChatCommand> transferCommandTable =
+        {
+            { "list",           SEC_ADMINISTRATOR,  true,  &HandleTransferListCommand,                 "" },
+            { "get",            SEC_ADMINISTRATOR,  true,  &HandleTransferGetCommand,                  "" },
+            { "approve",        SEC_ADMINISTRATOR,  true,  &HandleTransferApproveCommand,              "" },
+            { "reject",         SEC_ADMINISTRATOR,  true,  &HandleTransferRejectCommand,               "" },
+            { "clean",          SEC_ADMINISTRATOR,  true,   &HandleTransferCleanCommand,               "" }
+        };
+
+        static std::vector<ChatCommand> importCommandTable =
+        {
+            { "request",        SEC_PLAYER,  true,  &HandleRequestImportCharacterCommand,   "" },
+            { "list",           SEC_PLAYER,  true,  &HandleImportListCommand,               "" },
+            { "cancel",         SEC_PLAYER,  true,  &HandleImportCancelCommand,             "" }
+        };
+
         static std::vector<ChatCommand> characterDeletedCommandTable =
         {
             { "delete",        SEC_CONSOLE,         true,  &HandleCharacterDeletedDeleteCommand,  "" },
@@ -50,12 +66,15 @@ public:
 
         static std::vector<ChatCommand> characterCommandTable =
         {
+            { "export",         SEC_PLAYER,         true,  &HandleCharacterExportCommand,          "" },
+            { "import",         SEC_PLAYER,         true,  &HandleCharacterImportRequestCommand,   "" },
             { "customize",      SEC_GAMEMASTER,     true,  &HandleCharacterCustomizeCommand,       "" },
             { "changefaction",  SEC_GAMEMASTER,     true,  &HandleCharacterChangeFactionCommand,   "" },
             { "changerace",     SEC_GAMEMASTER,     true,  &HandleCharacterChangeRaceCommand,      "" },
             { "check",          SEC_GAMEMASTER,     false,  nullptr,                               "", characterCheckCommandTable },
             { "erase",          SEC_CONSOLE,        true,  &HandleCharacterEraseCommand,           "" },
             { "deleted",        SEC_ADMINISTRATOR,  true,  nullptr,                                "", characterDeletedCommandTable },
+            { "transfer",       SEC_ADMINISTRATOR,  true,  nullptr,                                "", transferCommandTable },
             { "level",          SEC_GAMEMASTER,     true,  &HandleCharacterLevelCommand,           "" },
             { "rename",         SEC_GAMEMASTER,     true,  &HandleCharacterRenameCommand,          "" },
             { "reputation",     SEC_GAMEMASTER,     true,  &HandleCharacterReputationCommand,      "" },
@@ -972,7 +991,88 @@ public:
 
         return true;
     }
+    // Creates import request from a (signed) character file
+    static bool HandleCharacterImportRequestCommand(ChatHandler* handler, char const* args)
+    {
+        if (!*args)
+            return false;
+        // check if the realm has transfer enabled
+        // fail with message about "secure transfers not enabled yet"
 
+        // validate file is signed correctly
+
+        // check if the public key which signed the file is in our servers "trusted" list
+
+        // unwrap file
+        // check transfer-char-uuid in char db. if any char already exists with it, fail (no duplicate chars)
+        // check uuid in transfer-list, if exists already requested -> failed
+        // store in pending_transfers
+        return true
+    }
+    // List transfer requests by account
+    static bool HandleImportListCommand(ChatHandler* handler, char const* args)
+    {
+        // lists open requests, along with reject status/date
+        return true
+    }
+    // Cancel transfer request
+    static bool HandleImportCancelCommand(ChatHandler* handler, char const* args)
+    {
+        // lists open requests, along with reject status/date
+        return true
+    }
+    // Export and sign a character for transfer
+    static bool HandleCharacterExportCommand(ChatHandler* handler, char const* args)
+    {
+        // check if the realm has transfer enabled
+        // fail with message about "secure transfers not enabled yet"
+
+        // create transfer-char-uuid for char if not exists
+
+        // fail if char banned
+
+        // perform pdump w/ temp file
+
+        // add metadata to temp file
+
+        // sign temp file -> save final file based on args
+        return true;
+    }
+    // Administrator list current character transfers requests
+    static bool HandleTransferListCommand(ChatHandler* handler, char const* args)
+    {
+        // display uuids of transfers that are not denied
+        return true;
+    }
+    // Administrator view a request for character transfer
+    static bool HandleTransferGetCommand(ChatHandler* handler, char const* args)
+    {
+        // display info about individual transfer
+        return true;
+    }
+    // Administrator approve request for character transfer
+    static bool HandleTransferApproveCommand(ChatHandler* handler, char const* args)
+    {
+        // get raw pdump, build args from account/name columns
+        // run pdump import script
+        // if successful,
+        // remove transfer from pending
+        // fetch guid from name+account,
+        // add to completed_transfers
+        return true;
+    }
+    // Administrator reject character transfer request
+    static bool HandleTransferRejectCommand(ChatHandler* handler, char const* args)
+    {
+        // rm from pending_transfers, add to rejected with comment
+        return true;
+    }
+    // Prune rejected transfer requests older than XX
+    static bool HandleTransferCleanCommand(ChatHandler* handler, char const* args)
+    {
+        // clean rejected transfers older than x days
+        return true;
+    }
     static bool HandleCharacterCheckBankCommand(ChatHandler* handler, char const* /*args*/)
     {
         handler->GetSession()->SendShowBank(handler->GetSession()->GetPlayer()->GetGUID());

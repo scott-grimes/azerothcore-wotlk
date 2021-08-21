@@ -11,7 +11,7 @@
 #include "PlayerDump.h"
 #include "World.h"
 
-#define DUMP_TABLE_COUNT 27
+#define DUMP_TABLE_COUNT 28
 struct DumpTable
 {
     char const* name;
@@ -40,6 +40,7 @@ static DumpTable dumpTables[DUMP_TABLE_COUNT] =
     { "character_spell",                  DTT_CHAR_TABLE },
     { "character_spell_cooldown",         DTT_CHAR_TABLE },
     { "character_talent",                 DTT_CHAR_TABLE },
+    { "character_ac_uuid",                DTT_CHAR_TABLE },
     { "mail",                             DTT_MAIL       },
     { "mail_items",                       DTT_MAIL_ITEM  }, // must be after mail
     { "pet_aura",                         DTT_PET_TABLE  }, // must be after character_pet

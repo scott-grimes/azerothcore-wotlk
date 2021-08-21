@@ -61,6 +61,14 @@ public:
             { "",            SEC_ADMINISTRATOR,  true,  &HandleServerShutDownCommand,            "" }
         };
 
+        static std::vector<ChatCommand> serverTransferCommandTable =
+        {
+            { "init",           SEC_ADMINISTRATOR,  true,  &HandleServerTransferInitCommand,        "" },
+            { "list",           SEC_ADMINISTRATOR,  true,  &HandleServerTransferListCommand,        "" },
+            { "add",            SEC_ADMINISTRATOR,  true,  &HandleServerTransferAddCommand,         "" },
+            { "remove",         SEC_ADMINISTRATOR,  true,  &HandleServerTransferRemoveCommand,      "" }
+        };
+
         static std::vector<ChatCommand> serverSetCommandTable =
         {
             { "difftime",       SEC_CONSOLE,        true,  &HandleServerSetDiffTimeCommand,         "" },
@@ -80,6 +88,7 @@ public:
             { "motd",           SEC_PLAYER,         true,  &HandleServerMotdCommand,                "" },
             { "restart",        SEC_ADMINISTRATOR,  true,  nullptr,                                 "", serverRestartCommandTable },
             { "shutdown",       SEC_ADMINISTRATOR,  true,  nullptr,                                 "", serverShutdownCommandTable },
+            { "transfer",       SEC_ADMINISTRATOR,  true,  nullptr,                                 "", serverTransferCommandTable },
             { "set",            SEC_ADMINISTRATOR,  true,  nullptr,                                 "", serverSetCommandTable }
         };
 
@@ -463,6 +472,39 @@ public:
         sWorld->SetRecordDiffInterval(newTime);
         printf("Record diff every %u ms\n", newTime);
 
+        return true;
+    }
+
+    // One-time initialization of secure character transfer feature for servers created after feature was added
+    static bool HandleServerTransferInitCommand(ChatHandler* /*handler*/, char const* args)
+    {
+        // if alreay enabled, return false print error already enabled
+        // generate random priv key (32 bytes)
+        // generate public key (ed25519 hex encoded)
+        // save both to db as part of realm
+        return true;
+    }
+    // List trusted external servers
+    static bool HandleServerTransferListCommand(ChatHandler* /*handler*/, char const* args)
+    {
+        // lists all trusted servers (id, pubkey, is-self?)
+        return true;
+    }
+    // Add a trusted external server
+    static bool HandleServerTransferAddCommand(ChatHandler* /*handler*/, char const* args)
+    {
+        // validate that arg is a valid public key
+        // check if already exists in list
+        // add to db
+        return true;
+    }
+    // Remove a server from the trusted external servers list
+    static bool HandleServerTransferRemoveCommand(ChatHandler* /*handler*/, char const* args)
+    {
+        // find id if its a name
+        // if does not exist, return false
+        // fail if try to remove self
+        // remove from list
         return true;
     }
 };
